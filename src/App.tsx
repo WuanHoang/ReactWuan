@@ -1,6 +1,6 @@
 import {Routes, Route} from 'react-router-dom'
-import Test from "./ListGroup";
 import NavBar from "./NavBar";
+
 
 function App()
 {
@@ -11,12 +11,6 @@ function App()
     <>
       <div>
         <NavBar></NavBar>
-        <h1> LIST GROUP </h1>
-        <Routes>
-          <Route path="/Features" element = {<Test item = {props} heading='test'></Test>}/>
-          <Route path="/Pricing" element = {<Test item = {props2} heading='test'></Test>}/>
-          <Route path="/Home" element = {<Test item = {props3} heading='test'></Test>}/>
-        </Routes>
       </div>
     </>
   )

@@ -1,25 +1,22 @@
-import { useState } from 'react';
+import { createRef } from "react";
+import { Menu, Tab, Sticky } from "semantic-ui-react";
+import {ContentLayout1, ContentLayout2} from './Content';
+
+const panes = [
+    { menuItem: 'Tab 1', render: () => <ContentLayout1></ContentLayout1> },
+    { menuItem: 'Tab 2', render: () => <ContentLayout2></ContentLayout2> },
+    { menuItem: 'Tab 3', render: () => 'Hello world' },
+    ]
 
 function NavBar() {
+    const contextRef = createRef();
     return (
         <>
-            <nav className="navbar navbar-expand-lg bg-body-tertiary">
-                <div className="container-fluid">
-                    <a className="navbar-brand" href="#">Navbar</a>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-                        <div className="navbar-nav">
-                            <a className="nav-link" aria-current="page" href="./Home">Home</a>
-                            <a className="nav-link" href="./Features">Features</a>
-                            <a className="nav-link" href="./Pricing">Pricing</a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+        
+        <Tab menu={{pointing: true} } panes={panes}/>
         </>
     )
+  
 }
 
 export default NavBar;
