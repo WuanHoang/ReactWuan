@@ -1,17 +1,15 @@
-import {Routes, Route} from 'react-router-dom'
-import NavBar from "./NavBar";
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import { useState } from 'react';
+import { Chat } from './Chat'
+import { Auth } from './Auth';
 
-
-function App()
-{
-  const props= ['orange', 'red' , 'green'];
-  const props2 = ['blue', 'orange', 'green'];
-  const props3 = ['red', 'green', 'white'];
-  return (
+function App(){
+  return(
     <>
-      <div>
-        <NavBar></NavBar>
-      </div>
+        <Routes>
+            <Route path="/" Component={Auth}/>
+            <Route path="/Chat" Component={Chat}/>
+        </Routes>
     </>
   )
 }
