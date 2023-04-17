@@ -1,17 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Button, Header, Segment, Comment, Form } from "semantic-ui-react";
+import { Input, Button, Header, Segment, Comment, Form } from "semantic-ui-react";
 import {addDoc, collection, serverTimestamp, onSnapshot, query,where, doc, orderBy, limit} from "firebase/firestore";
 import { auth, db } from "./FireBase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
-const Chat: React.FC = () => {
+const Room = () => {
   const navigate = useNavigate();
   const date = serverTimestamp();
   const dateScreen = new Date();
   const dateScreening = dateScreen.getHours() + ":" + dateScreen.getMinutes();
-  const room = 0;
-  const [value, setValue] = useState("")
+  const [room, setRoom] = useState(localStorage.getItem('room'));
+  const roomInputRef = useRef<any>(null);
+  const [value, setValue] = useState<string>(""); // explicitly specify the type of value
   const [messages, setMessages] = useState<any[]>([]);
 
   const messageRef = collection(db, "messages");
@@ -33,7 +34,7 @@ const Chat: React.FC = () => {
 
   const handleSendMessage = async (e : React.ChangeEvent<any>) => {
     e.preventDefault();
-
+    console.log(room);
     if( value === "") return;
 
     await addDoc(messageRef,{
@@ -46,8 +47,11 @@ const Chat: React.FC = () => {
     setValue("")
   };
 
-  
-  
+  const HandleRoomInput = () =>{
+    localStorage.setItem("room", roomInputRef.current.value);
+    navigate(0);
+  }
+
   const SignOut = async () =>{
     try{
         await signOut(auth);
@@ -57,10 +61,6 @@ const Chat: React.FC = () => {
         console.log(err);
     }
   }
-
-  const ChangeRoom = () => {
-    navigate('/Room');
-  }
   
   if(!localStorage.getItem("UID")){
     return <h1>please login first</h1>
@@ -68,7 +68,7 @@ const Chat: React.FC = () => {
   return (
     <Comment.Group>
       <Header as='h3'dividing>
-        Chat
+        Chat in room {room}
       </Header>
       <Segment style={{overflow: 'auto', maxHeight: 500 }}>
       {messages.map((message, index) => (
@@ -89,12 +89,15 @@ const Chat: React.FC = () => {
         <Form.TextArea value={value} onChange={(e) => setValue(e.target.value)} />
         <Button content='Send Message' labelPosition='left' icon='edit' primary onClick={handleSendMessage} />
         <Button content='Sign Out'labelPosition="right" icon='delete' color="red" onClick={SignOut} />
-        <Button content='Room'labelPosition="right" icon='check' color="green" onClick={ChangeRoom} />
-        
+        <Button content='Chat'labelPosition="right" icon='check' color="green" onClick={()=> navigate('/chat')} />
+        <Segment>
+          <input ref = {roomInputRef}></input>
+          <Button onClick={HandleRoomInput}>Join</Button>
+        </Segment>
       </Form>
         
     </Comment.Group>
   );
 };
 
-export { Chat };
+export { Room };
