@@ -18,9 +18,9 @@ const HandleUsername = async () =>{
     console.log(err);
   }
 }
-HandleUsername();
 
 const Room = () => {
+  HandleUsername();
   const navigate = useNavigate();
   const date = serverTimestamp();
   const dateScreen = new Date();

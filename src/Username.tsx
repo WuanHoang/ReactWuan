@@ -15,7 +15,7 @@ export function Username() {
         await setDoc(doc(usernameRef, auth.currentUser?.uid),{
             username: username
         })
-        navigate('/Chat')
+        setTimeout(() => navigate('/Chat'),1000) 
     }
     return (
         <>
