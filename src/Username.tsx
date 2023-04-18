@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react"
-import { Input, Button, Form, Header } from "semantic-ui-react"
+import { useState} from "react"
+import { Input, Button, Header, Segment } from "semantic-ui-react"
 import { auth, db } from "./FireBase";
 import { collection, setDoc, doc} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
@@ -15,13 +15,27 @@ export function Username() {
         await setDoc(doc(usernameRef, auth.currentUser?.uid),{
             username: username
         })
+        setUsername("")
         setTimeout(() => navigate('/Chat'),1000) 
     }
+    const handlePress = async (e : React.KeyboardEvent<any>) =>{
+        if (username === "") return;
+        if(e.key == 'Enter'){
+            await setDoc(doc(usernameRef, auth.currentUser?.uid),{
+                username: username
+            })
+            setUsername("")
+            setTimeout(() => navigate('/Chat'),1000) 
+        }
+        
+    } 
     return (
         <>
+        <Segment textAlign="center" vertical placeholder color="blue">
             <Header>Please type in username</Header>
-            <Input onChange={(e) => {setUsername(e.target.value)}}></Input>
-            <Button onClick={HandleUsername}>Ok</Button>
+            <Input value = {username} onChange={(e) => {setUsername(e.target.value)}} placeholder = 'username' onKeyPress = {handlePress}/>
+            <Button onClick={HandleUsername}>Go</Button>
+        </Segment>
         </>
     )
 }

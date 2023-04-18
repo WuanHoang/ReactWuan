@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {signInWithPopup, signOut} from "firebase/auth"
-import { Button } from "semantic-ui-react";
+import { Button, Segment } from "semantic-ui-react";
 import { auth, provider } from "./FireBase";
 
 export function Auth() {
@@ -17,7 +17,7 @@ export function Auth() {
         }
     }
     const HandleChat = () =>{
-        navigate('/Username');
+        navigate('/Chat');
     }
     const SignOut = async () =>{
         try{
@@ -28,17 +28,22 @@ export function Auth() {
             console.log(err);
         }
       }
+
     if(!UID){
         return(
-            <>
-                <Button color="red" onClick={HandleLogin}>Log In With Google</Button>
+            <> 
+                <Segment textAlign="center" vertical placeholder color="blue">
+                    <Button color="red" onClick={HandleLogin}>Log In With Google</Button>
+                </Segment>
             </>
         )
     }else{
         return( 
         <>
-            <Button color="blue" onClick={HandleChat}>Start Chatting</Button>
-            <Button color="red" onClick={SignOut}>Sign Out</Button>
+            <Segment >
+                <Button color="blue" onClick={HandleChat}>Start Chatting</Button>
+                <Button color="red" onClick={SignOut}>Sign Out</Button>
+            </Segment>
         </>
         )
     }

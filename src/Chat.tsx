@@ -61,9 +61,13 @@ const Chat: React.FC = () => {
     })
     setValue("")
   };
+  //handle scroll to bottom of screen
+    const divRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+      divRef.current?.scrollIntoView({ behavior: 'smooth' , block: "end", inline: "nearest"});
+    });
 
-  
-  
+
   const SignOut = async () =>{
     try{
         await signOut(auth);
@@ -77,19 +81,35 @@ const Chat: React.FC = () => {
   const ChangeRoom = () => {
     navigate('/Room');
   }
+  const handlePress = async  (e: React.KeyboardEvent<any>)=>{
+    if(e.key === 'Enter'){
+      if( value === "") return;
+      await addDoc(messageRef,{
+        message: value,
+        username: username,
+        date: dateScreening,
+        room: room,
+        timeStamp: date,
+        UID: UID
+      })
+      setValue("")
+    }
+  }
   
   if(!UID){
     return <h1>please login first</h1>
   }
   return (
     <Comment.Group>
-      <Header as='h3'dividing>
-        Chat
-      </Header>
-      <Segment style={{overflow: 'auto', maxHeight: 500 }}>
+        <Segment>
+          <Header textAlign="center" color="blue">
+            Chatting With Username:   "{username}"
+          </Header>
+        </Segment>
+      <div style={{overflow: 'auto', height: 400 }}>
       {messages.map((message, index) => (
         <Comment key={index}>
-          <Comment.Avatar src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' />
+          <Comment.Avatar src='https://i.bloganchoi.com/bloganchoi.com/wp-content/uploads/2022/02/avatar-trang-y-nghia.jpeg?fit=512%2C20000&quality=95&ssl=1' />
           <Comment.Content>
             <Comment.Author as='a'>{message.username}</Comment.Author>
             <Comment.Metadata>
@@ -99,10 +119,12 @@ const Chat: React.FC = () => {
           </Comment.Content>
         </Comment>
       ))}
-      </Segment>
+      <div  ref={divRef}></div>
+      </div>
+      
 
       <Form reply>
-        <Form.TextArea value={value} onChange={(e) => setValue(e.target.value)} />
+        <Form.TextArea value={value} onChange={(e) => setValue(e.target.value)} onKeyPress={handlePress} />
         <Button content='Send Message' labelPosition='left' icon='edit' primary onClick={handleSendMessage} />
         <Button content='Sign Out'labelPosition="right" icon='delete' color="red" onClick={SignOut} />
         <Button content='Room'labelPosition="right" icon='check' color="green" onClick={ChangeRoom} />

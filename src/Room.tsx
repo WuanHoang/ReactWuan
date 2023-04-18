@@ -42,10 +42,15 @@ const Room = () => {
       message.reverse();
       setMessages(message);
     });
-
     return () => unsubcribe();
 
   },[])
+  
+   //handle scroll to bottom of screen
+   const divRef = useRef<HTMLDivElement>(null);
+   useEffect(() => {
+     divRef.current?.scrollIntoView({ behavior: 'smooth' , block: "end", inline: "nearest"});
+   });
 
   const handleSendMessage = async (e : React.ChangeEvent<any>) => {
     e.preventDefault();
@@ -68,6 +73,21 @@ const Room = () => {
     navigate(0);
   }
 
+  const handlePress = async  (e: React.KeyboardEvent<any>)=>{
+    if(e.key === 'Enter'){
+      if( value === "") return;
+      await addDoc(messageRef,{
+        message: value,
+        username: username,
+        date: dateScreening,
+        room: room,
+        timeStamp: date,
+        UID: UID
+      })
+      setValue("")
+    }
+  }
+
   const SignOut = async () =>{
     try{
         await signOut(auth);
@@ -78,15 +98,17 @@ const Room = () => {
     }
   }
   
-  if(UID){
+  if(!UID){
     return <h1>please login first</h1>
   }
   return (
     <Comment.Group>
-      <Header as='h3'dividing>
-        Chat in room {room}
-      </Header>
-      <Segment style={{overflow: 'auto', maxHeight: 500 }}>
+      <Segment>
+          <Header textAlign="center" color="blue">
+            Chatting With Username:   "{username}"
+          </Header>
+        </Segment>
+      <div style={{overflow: 'auto', height: 400 }}>
       {messages.map((message, index) => (
         <Comment key={index}>
           <Comment.Avatar src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' />
@@ -99,10 +121,11 @@ const Room = () => {
           </Comment.Content>
         </Comment>
       ))}
-      </Segment>
+      <div  ref={divRef}></div>
+      </div>
 
       <Form reply>
-        <Form.TextArea value={value} onChange={(e) => setValue(e.target.value)} />
+        <Form.TextArea  value={value} onChange={(e) => setValue(e.target.value)} onKeyPress = {handlePress} />
         <Button content='Send Message' labelPosition='left' icon='edit' primary onClick={handleSendMessage} />
         <Button content='Sign Out'labelPosition="right" icon='delete' color="red" onClick={SignOut} />
         <Button content='Chat'labelPosition="right" icon='check' color="green" onClick={()=> navigate('/chat')} />
