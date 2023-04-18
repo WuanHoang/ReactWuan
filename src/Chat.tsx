@@ -5,26 +5,32 @@ import { auth, db } from "./FireBase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
+const UID : string = localStorage.getItem("UID") || "null"
+const usernameRef = doc(db, "usernames", UID)
+
+var username = '';
+const HandleUsername = async () =>{
+  try {
+    const docSnap = await getDoc(usernameRef);
+    username = docSnap.data()?.username;
+    console.log(username)
+  }catch(err){
+    console.log(err);
+  }
+}
+HandleUsername();
+
 const Chat: React.FC = () => {
   const navigate = useNavigate();
   const date = serverTimestamp();
   const dateScreen = new Date();
   const dateScreening = dateScreen.getHours() + ":" + dateScreen.getMinutes();
-  const UID : string = localStorage.getItem("UID") || "null"
   const room = 0;
   const [value, setValue] = useState("")
   const [messages, setMessages] = useState<any[]>([]);
   const messageRef = collection(db, "messages");
-  const usernameRef = doc(db, "usernames", UID)
-  const username = async () =>{
-    try {
-      const docSnap = await getDoc(usernameRef);
-      return docSnap.data();
-    }catch(err){
-      console.log(err);
-    }
-  }
-  console.log(username());
+  
+
   useEffect(() =>{
     const queryMessage = query(messageRef, where("room", "==", room) , orderBy("timeStamp",'desc'), limit(25))
     const unsubcribe = onSnapshot(queryMessage, (snapshot) =>{
@@ -47,6 +53,7 @@ const Chat: React.FC = () => {
 
     await addDoc(messageRef,{
       message: value,
+      username: username,
       date: dateScreening,
       room: room,
       timeStamp: date,
@@ -84,7 +91,7 @@ const Chat: React.FC = () => {
         <Comment key={index}>
           <Comment.Avatar src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' />
           <Comment.Content>
-            <Comment.Author as='a'>Anonymous</Comment.Author>
+            <Comment.Author as='a'>{message.username}</Comment.Author>
             <Comment.Metadata>
               <div>{message.date}</div>
             </Comment.Metadata>

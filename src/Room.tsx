@@ -1,9 +1,24 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Input, Button, Header, Segment, Comment, Form } from "semantic-ui-react";
-import {addDoc, collection, serverTimestamp, onSnapshot, query,where, doc, orderBy, limit} from "firebase/firestore";
+import {addDoc, collection, serverTimestamp, onSnapshot, query,where, doc, orderBy, limit, getDoc} from "firebase/firestore";
 import { auth, db } from "./FireBase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+
+const UID : string = localStorage.getItem("UID") || "null"
+const usernameRef = doc(db, "usernames", UID)
+
+var username = '';
+const HandleUsername = async () =>{
+  try {
+    const docSnap = await getDoc(usernameRef);
+    username = docSnap.data()?.username;
+    console.log(username)
+  }catch(err){
+    console.log(err);
+  }
+}
+HandleUsername();
 
 const Room = () => {
   const navigate = useNavigate();
@@ -39,10 +54,11 @@ const Room = () => {
 
     await addDoc(messageRef,{
       message: value,
+      username: username,
       date: dateScreening,
       room: room,
       timeStamp: date,
-      UID: auth.currentUser?.uid
+      UID: UID
     })
     setValue("")
   };
@@ -62,7 +78,7 @@ const Room = () => {
     }
   }
   
-  if(!localStorage.getItem("UID")){
+  if(UID){
     return <h1>please login first</h1>
   }
   return (
@@ -75,7 +91,7 @@ const Room = () => {
         <Comment key={index}>
           <Comment.Avatar src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' />
           <Comment.Content>
-            <Comment.Author as='a'>Anonymous</Comment.Author>
+            <Comment.Author as='a'>{message.username}</Comment.Author>
             <Comment.Metadata>
               <div>{message.date}</div>
             </Comment.Metadata>
