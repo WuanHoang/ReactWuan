@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Button, Header, Segment, Comment, Form } from "semantic-ui-react";
-import {addDoc, collection, serverTimestamp, onSnapshot, query,where, doc, orderBy, limit} from "firebase/firestore";
+import {addDoc, getDoc , collection, serverTimestamp, onSnapshot, query,where, doc, orderBy, limit, getDocs} from "firebase/firestore";
 import { auth, db } from "./FireBase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -10,12 +10,21 @@ const Chat: React.FC = () => {
   const date = serverTimestamp();
   const dateScreen = new Date();
   const dateScreening = dateScreen.getHours() + ":" + dateScreen.getMinutes();
+  const UID : string = localStorage.getItem("UID") || "null"
   const room = 0;
   const [value, setValue] = useState("")
   const [messages, setMessages] = useState<any[]>([]);
-
   const messageRef = collection(db, "messages");
-
+  const usernameRef = doc(db, "usernames", UID)
+  const username = async () =>{
+    try {
+      const docSnap = await getDoc(usernameRef);
+      return docSnap.data();
+    }catch(err){
+      console.log(err);
+    }
+  }
+  console.log(username());
   useEffect(() =>{
     const queryMessage = query(messageRef, where("room", "==", room) , orderBy("timeStamp",'desc'), limit(25))
     const unsubcribe = onSnapshot(queryMessage, (snapshot) =>{
@@ -41,7 +50,7 @@ const Chat: React.FC = () => {
       date: dateScreening,
       room: room,
       timeStamp: date,
-      UID: auth.currentUser?.uid
+      UID: UID
     })
     setValue("")
   };
@@ -62,7 +71,7 @@ const Chat: React.FC = () => {
     navigate('/Room');
   }
   
-  if(!localStorage.getItem("UID")){
+  if(!UID){
     return <h1>please login first</h1>
   }
   return (

@@ -11,13 +11,13 @@ export function Auth() {
         try{
             const result = await signInWithPopup(auth, provider);
             localStorage.setItem("UID", result.user.uid);
-            navigate('/Chat');
+            navigate('/Username');
         }catch(err){
             console.log(err);
         }
     }
     const HandleChat = () =>{
-        navigate('/Chat');
+        navigate('/Username');
     }
     const SignOut = async () =>{
         try{

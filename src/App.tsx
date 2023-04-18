@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Chat } from './Chat'
 import { Auth } from './Auth';
 import { Room } from './Room';
+import { Username } from './Username';
 
 function App(){
   return(
@@ -11,6 +12,7 @@ function App(){
             <Route path="/" Component={Auth}/>
             <Route path="/Chat" Component={Chat}/>
             <Route path="/Room" Component={Room}/>
+            <Route path="/Username" Component={Username}/>
         </Routes>
     </>
   )
