@@ -15,7 +15,6 @@ export function Username() {
         await setDoc(doc(usernameRef, auth.currentUser?.uid),{
             username: username
         })
-        setUsername("")
         setTimeout(() => navigate('/Chat'),1000) 
     }
     const handlePress = async (e : React.KeyboardEvent<any>) =>{
@@ -24,7 +23,6 @@ export function Username() {
             await setDoc(doc(usernameRef, auth.currentUser?.uid),{
                 username: username
             })
-            setUsername("")
             setTimeout(() => navigate('/Chat'),1000) 
         }
         

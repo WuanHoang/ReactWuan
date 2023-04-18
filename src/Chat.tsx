@@ -5,22 +5,9 @@ import { auth, db } from "./FireBase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
-const UID : string = localStorage.getItem("UID") || "null"
-const usernameRef = doc(db, "usernames", UID)
-
-var username = '';
-const HandleUsername = async () =>{
-  try {
-    const docSnap = await getDoc(usernameRef);
-    username = docSnap.data()?.username;
-    console.log(username)
-  }catch(err){
-    console.log(err);
-  }
-}
 
 const Chat: React.FC = () => {
-  HandleUsername();
+  const UID : string = localStorage.getItem("UID") || "null"
   const navigate = useNavigate();
   const date = serverTimestamp();
   const dateScreen = new Date();
@@ -28,9 +15,20 @@ const Chat: React.FC = () => {
   const room = 0;
   const [value, setValue] = useState("")
   const [messages, setMessages] = useState<any[]>([]);
+  const [username, setUsername] = useState('');
   const messageRef = collection(db, "messages");
-  
+  const usernameRef = doc(db, "usernames", UID)
 
+  const HandleUsername = async () =>{
+    try {
+      const docSnap = await getDoc(usernameRef);
+      console.log(username)
+      setUsername(docSnap.data()?.username)
+    }catch(err){
+      console.log(err);
+    }
+  }
+  HandleUsername();
   useEffect(() =>{
     const queryMessage = query(messageRef, where("room", "==", room) , orderBy("timeStamp",'desc'), limit(25))
     const unsubcribe = onSnapshot(queryMessage, (snapshot) =>{

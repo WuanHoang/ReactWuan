@@ -5,22 +5,7 @@ import { auth, db } from "./FireBase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
-const UID : string = localStorage.getItem("UID") || "null"
-const usernameRef = doc(db, "usernames", UID)
-
-var username = '';
-const HandleUsername = async () =>{
-  try {
-    const docSnap = await getDoc(usernameRef);
-    username = docSnap.data()?.username;
-    console.log(username)
-  }catch(err){
-    console.log(err);
-  }
-}
-
 const Room = () => {
-  HandleUsername();
   const navigate = useNavigate();
   const date = serverTimestamp();
   const dateScreen = new Date();
@@ -29,7 +14,19 @@ const Room = () => {
   const roomInputRef = useRef<any>(null);
   const [value, setValue] = useState<string>(""); // explicitly specify the type of value
   const [messages, setMessages] = useState<any[]>([]);
+  const [username, setUsername] = useState('');
+  const UID : string = localStorage.getItem("UID") || "null"
+  const usernameRef = doc(db, "usernames", UID)
 
+  const HandleUsername = async () =>{
+    try {
+      const docSnap = await getDoc(usernameRef);
+      setUsername(docSnap.data()?.username);
+    }catch(err){
+      console.log(err);
+    }
+  }
+  HandleUsername();
   const messageRef = collection(db, "messages");
 
   useEffect(() =>{
@@ -105,7 +102,7 @@ const Room = () => {
     <Comment.Group>
       <Segment>
           <Header textAlign="center" color="blue">
-            Chatting With Username:   "{username}"
+            Chatting in {room} With Username:   "{username}"
           </Header>
         </Segment>
       <div style={{overflow: 'auto', height: 400 }}>
