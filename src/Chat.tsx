@@ -22,16 +22,16 @@ const Chat: React.FC = () => {
   const HandleUsername = async () =>{
     try {
       const docSnap = await getDoc(usernameRef);
-      console.log(username)
       setUsername(docSnap.data()?.username)
     }catch(err){
       console.log(err);
     }
   }
   HandleUsername();
+
   useEffect(() =>{
     const queryMessage = query(messageRef, where("room", "==", room) , orderBy("timeStamp",'desc'), limit(25))
-    const unsubcribe = onSnapshot(queryMessage, (snapshot) =>{
+    const unsubscribe = onSnapshot(queryMessage, (snapshot) =>{
       let message: any[] = [];
       snapshot.forEach((doc)=>{
         message.push({...doc.data(), id: doc.id})
@@ -40,7 +40,7 @@ const Chat: React.FC = () => {
       setMessages(message);
     });
 
-    return () => unsubcribe();
+    return () => unsubscribe();
 
   },[])
 
@@ -62,8 +62,8 @@ const Chat: React.FC = () => {
   //handle scroll to bottom of screen
     const divRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
-      divRef.current?.scrollIntoView({ behavior: 'smooth' , block: "end", inline: "nearest"});
-    });
+      divRef.current?.scrollIntoView({ behavior: 'smooth' , block: "start", inline: "nearest"});
+    }, [messages])
 
 
   const SignOut = async () =>{
