@@ -54,9 +54,9 @@ const Chat: React.FC = () => {
     await addDoc(messageRef,{
       message: value,
       username: username,
-      avatarId: avatarId,
       date: dateScreening,
       room: room,
+      avatarId: avatarId,
       timeStamp: date,
       UID: UID
     })
@@ -91,6 +91,7 @@ const Chat: React.FC = () => {
         username: username,
         date: dateScreening,
         room: room,
+        avatarId: avatarId,
         timeStamp: date,
         UID: UID
       })
@@ -127,10 +128,10 @@ const Chat: React.FC = () => {
       
 
       <Form reply>
-        <Form.TextArea value={value} onChange={(e) => setValue(e.target.value)} onKeyPress={handlePress} />
-        <Button content='Send Message' labelPosition='left' icon='edit' primary onClick={handleSendMessage} />
-        <Button content='Sign Out'labelPosition="right" icon='delete' color="red" onClick={SignOut} />
-        <Button content='Room'labelPosition="right" icon='check' color="green" onClick={ChangeRoom} />
+        <Form.TextArea value={value} placeholder="Write your message here" style={{ maxHeight: 50 }} onChange={(e) => setValue(e.target.value)} onKeyPress={handlePress} />
+        <Button content='Sign Out'labelPosition="right" icon='sign-out' color="red" onClick={SignOut} />
+        <Button content='Room'labelPosition="right" icon='reply' color="green" onClick={ChangeRoom} />
+        <Button content='Send' labelPosition='left' icon='send' primary onClick={handleSendMessage} />
         
       </Form>
         

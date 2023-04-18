@@ -62,6 +62,7 @@ const Room = () => {
       username: username,
       date: dateScreening,
       room: room,
+      avatarId: avatarId,
       timeStamp: date,
       UID: UID
     })
@@ -81,6 +82,7 @@ const Room = () => {
         username: username,
         date: dateScreening,
         room: room,
+        avatarId: avatarId,
         timeStamp: date,
         UID: UID
       })
@@ -108,7 +110,7 @@ const Room = () => {
             Chatting in room {room} With Username:   "{username}"
           </Header>
         </Segment>
-      <div style={{overflow: 'auto', height: 400 }}>
+      <div style={{overflow: 'auto', height: 300 }}>
       {messages.map((message, index) => (
         <Comment key={index}>
           <Comment.Avatar src={avatars[message.avatarId]} />
