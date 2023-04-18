@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Input, Button, Header, Segment, Comment, Form } from "semantic-ui-react";
+import { Button, Header, Segment, Comment, Form} from "semantic-ui-react";
 import {addDoc, collection, serverTimestamp, onSnapshot, query,where, doc, orderBy, limit, getDoc} from "firebase/firestore";
 import { auth, db } from "./FireBase";
 import { signOut } from "firebase/auth";
@@ -10,11 +10,13 @@ const Room = () => {
   const date = serverTimestamp();
   const dateScreen = new Date();
   const dateScreening = dateScreen.getHours() + ":" + dateScreen.getMinutes();
+  const avatars = ['https://img.freepik.com/premium-vector/girl-s-face-with-beautiful-smile-female-avatar-website-social-network_499739-527.jpg?w=2000','https://img.freepik.com/premium-vector/portrait-young-man-with-beard-hair-style-male-avatar-vector-illustration_266660-423.jpg?w=2000']
   const [room, setRoom] = useState(localStorage.getItem('room'));
   const roomInputRef = useRef<any>(null);
   const [value, setValue] = useState<string>(""); // explicitly specify the type of value
   const [messages, setMessages] = useState<any[]>([]);
   const [username, setUsername] = useState('');
+  const [avatarId,setAvatarId] = useState(3);
   const UID : string = localStorage.getItem("UID") || "null"
   const usernameRef = doc(db, "usernames", UID)
 
@@ -22,6 +24,7 @@ const Room = () => {
     try {
       const docSnap = await getDoc(usernameRef);
       setUsername(docSnap.data()?.username);
+      setAvatarId(docSnap.data()?.gender);
     }catch(err){
       console.log(err);
     }
@@ -102,13 +105,13 @@ const Room = () => {
     <Comment.Group>
       <Segment>
           <Header textAlign="center" color="blue">
-            Chatting in {room} With Username:   "{username}"
+            Chatting in room {room} With Username:   "{username}"
           </Header>
         </Segment>
       <div style={{overflow: 'auto', height: 400 }}>
       {messages.map((message, index) => (
         <Comment key={index}>
-          <Comment.Avatar src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' />
+          <Comment.Avatar src={avatars[message.avatarId]} />
           <Comment.Content>
             <Comment.Author as='a'>{message.username}</Comment.Author>
             <Comment.Metadata>
@@ -122,13 +125,14 @@ const Room = () => {
       </div>
 
       <Form reply>
-        <Form.TextArea  value={value} onChange={(e) => setValue(e.target.value)} onKeyPress = {handlePress} />
-        <Button content='Send Message' labelPosition='left' icon='edit' primary onClick={handleSendMessage} />
-        <Button content='Sign Out'labelPosition="right" icon='delete' color="red" onClick={SignOut} />
-        <Button content='Chat'labelPosition="right" icon='check' color="green" onClick={()=> navigate('/chat')} />
-        <Segment>
-          <input ref = {roomInputRef}></input>
-          <Button onClick={HandleRoomInput}>Join</Button>
+        <Form.TextArea placeholder="Write your message here" style={{ maxHeight: 50 }} value={value} onChange={(e) => setValue(e.target.value)} onKeyPress = {handlePress} />
+        <Button content='Sign Out'labelPosition="right" icon='sign-out' color="red" onClick={SignOut} />
+        <Button content='Chat'labelPosition="right" icon='reply' color="green" onClick={()=> navigate('/chat')} />
+        <Button content='Send' labelPosition='left' icon='send' primary onClick={handleSendMessage} />
+        <Segment compact>
+          <input ref = {roomInputRef} placeholder="Enter room"></input>
+          
+          <Button onClick={HandleRoomInput}>Join Room</Button>
         </Segment>
       </Form>
         

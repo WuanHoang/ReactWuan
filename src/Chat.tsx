@@ -10,12 +10,14 @@ const Chat: React.FC = () => {
   const UID : string = localStorage.getItem("UID") || "null"
   const navigate = useNavigate();
   const date = serverTimestamp();
+  const avatars = ['https://img.freepik.com/premium-vector/girl-s-face-with-beautiful-smile-female-avatar-website-social-network_499739-527.jpg?w=2000','https://img.freepik.com/premium-vector/portrait-young-man-with-beard-hair-style-male-avatar-vector-illustration_266660-423.jpg?w=2000']
   const dateScreen = new Date();
   const dateScreening = dateScreen.getHours() + ":" + dateScreen.getMinutes();
   const room = 0;
   const [value, setValue] = useState("")
   const [messages, setMessages] = useState<any[]>([]);
   const [username, setUsername] = useState('');
+  const [avatarId,setAvatarId] = useState(3);
   const messageRef = collection(db, "messages");
   const usernameRef = doc(db, "usernames", UID)
 
@@ -23,14 +25,14 @@ const Chat: React.FC = () => {
     try {
       const docSnap = await getDoc(usernameRef);
       setUsername(docSnap.data()?.username)
+      setAvatarId(docSnap.data()?.gender);
     }catch(err){
       console.log(err);
     }
   }
   HandleUsername();
-
   useEffect(() =>{
-    const queryMessage = query(messageRef, where("room", "==", room) , orderBy("timeStamp",'desc'), limit(25))
+    let queryMessage = query(messageRef, where("room", "==", room) , orderBy("timeStamp",'desc'))
     const unsubscribe = onSnapshot(queryMessage, (snapshot) =>{
       let message: any[] = [];
       snapshot.forEach((doc)=>{
@@ -52,6 +54,7 @@ const Chat: React.FC = () => {
     await addDoc(messageRef,{
       message: value,
       username: username,
+      avatarId: avatarId,
       date: dateScreening,
       room: room,
       timeStamp: date,
@@ -75,6 +78,7 @@ const Chat: React.FC = () => {
         console.log(err);
     }
   }
+
 
   const ChangeRoom = () => {
     navigate('/Room');
@@ -104,21 +108,22 @@ const Chat: React.FC = () => {
             Chatting With Username:   "{username}"
           </Header>
         </Segment>
-      <div style={{overflow: 'auto', height: 400 }}>
-      {messages.map((message, index) => (
-        <Comment key={index}>
-          <Comment.Avatar src='https://i.bloganchoi.com/bloganchoi.com/wp-content/uploads/2022/02/avatar-trang-y-nghia.jpeg?fit=512%2C20000&quality=95&ssl=1' />
-          <Comment.Content>
-            <Comment.Author as='a'>{message.username}</Comment.Author>
-            <Comment.Metadata>
-              <div>{message.date}</div>
-            </Comment.Metadata>
-            <Comment.Text>{message.message}</Comment.Text>
-          </Comment.Content>
-        </Comment>
-      ))}
-      <div  ref={divRef}></div>
-      </div>
+        <div style={{overflow: 'auto', height: 300 }}>
+        {messages.map((message, index) => (
+          <Comment key={index}>
+            <Comment.Avatar src={avatars[message.avatarId]} />
+            <Comment.Content>
+              <Comment.Author as='a'>{message.username}</Comment.Author>
+              <Comment.Metadata>
+                <div>{message.date}</div>
+              </Comment.Metadata>
+              <Comment.Text>{message.message}</Comment.Text>
+            </Comment.Content>
+          </Comment>
+        ))}
+        <div  ref={divRef}></div>
+        </div>
+      
       
 
       <Form reply>
